@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 class Program
 {
@@ -13,8 +14,9 @@ class Program
 
         var salesFiles = FindFiles(storesDirectory);
 
-        File.WriteAllText(Path.Combine(salesTotalDir, "totals.txt"), string.Empty);
+        var salesTotal = CalculateSalesTotal(salesFiles);
 
+        File.AppendAllText(Path.Combine(salesTotalDir, "totals.txt"), $"{salesTotal}{Environment.NewLine}");
         foreach (var file in salesFiles)
         {
             System.Console.WriteLine(file);
@@ -26,7 +28,7 @@ class Program
         List<string> salesFiles = new List<string>();
         var foundFiles = Directory.EnumerateFiles(folderName, "*", SearchOption.AllDirectories);
 
-        /*
+
         foreach (var file in foundFiles)
         {
             var extention = Path.GetExtension(file);
@@ -34,7 +36,21 @@ class Program
             {
                 salesFiles.Add(file);
             }
-        }*/
+        }
         return salesFiles;
     }
+
+    static double CalculateSalesTotal(IEnumerable<string> salesFiles)
+    {
+        double total = 0;
+        foreach (var file in salesFiles)
+        {
+            var json = File.ReadAllText(file);
+            SalesData? data = JsonConvert.DeserializeObject<SalesData?>(json);
+            total += data?.Total ?? 0;
+        }
+        return total;
+    }
+
+    record SalesData(double Total);
 }
