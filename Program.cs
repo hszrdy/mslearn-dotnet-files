@@ -7,7 +7,13 @@ class Program
     {
         var currentDirectory = Directory.GetCurrentDirectory();
         var storesDirectory = Path.Combine(currentDirectory, "stores");
+
+        var salesTotalDir = Path.Combine(currentDirectory, "salesTotalDir");
+        Directory.CreateDirectory(salesTotalDir);
+
         var salesFiles = FindFiles(storesDirectory);
+
+        File.WriteAllText(Path.Combine(salesTotalDir, "totals.txt"), string.Empty);
 
         foreach (var file in salesFiles)
         {
@@ -20,6 +26,7 @@ class Program
         List<string> salesFiles = new List<string>();
         var foundFiles = Directory.EnumerateFiles(folderName, "*", SearchOption.AllDirectories);
 
+        /*
         foreach (var file in foundFiles)
         {
             var extention = Path.GetExtension(file);
@@ -27,7 +34,7 @@ class Program
             {
                 salesFiles.Add(file);
             }
-        }
+        }*/
         return salesFiles;
     }
 }
